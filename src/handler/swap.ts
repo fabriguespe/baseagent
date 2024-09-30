@@ -26,7 +26,7 @@ export async function handleSwap(context: HandlerContext) {
         token_from,
         token_to,
       });
-      context.reply(`${url_swap}`);
+      context.send(`${url_swap}`);
       break;
     default:
       // Handle unknown commands

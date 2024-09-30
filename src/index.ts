@@ -16,7 +16,7 @@ run(async (context: HandlerContext) => {
     },
   } = context;
   if (typeId !== "text") return;
-  console.log(text, params);
+
   if (text.includes("@swap")) {
     await agent(context);
   } else if (text.startsWith("/")) {

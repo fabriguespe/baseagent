@@ -24,7 +24,8 @@ export async function textGeneration(userPrompt: string, systemPrompt: string) {
       role: "assistant",
       content: reply || "No response from OpenAI.",
     });
-    return { reply: reply as string, history: messages };
+    let cleanReply = reply?.replace(/^`|`$/g, "");
+    return { reply: cleanReply as string, history: messages };
   } catch (error) {
     console.error("Failed to fetch from OpenAI:", error);
     throw error;
