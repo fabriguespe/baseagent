@@ -3,7 +3,7 @@ import { HandlerContext } from "@xmtp/message-kit";
 export async function handleSwap(context: HandlerContext) {
   const {
     message: {
-      content: { content, command, params },
+      content: { command, params },
     },
   } = context;
 

@@ -3,11 +3,6 @@ import { handler as agent } from "./handler/agent.js";
 import { handleSwap } from "./handler/swap.js";
 import { commands } from "./commands.js";
 
-const commandHandlers = {
-  "/swap": handleSwap,
-};
-
-const appConfig = { commands, commandHandlers };
 run(async (context: HandlerContext) => {
   const {
     message: {
@@ -29,4 +24,4 @@ run(async (context: HandlerContext) => {
   ) {
     await handleSwap(context);
   }
-}, appConfig);
+});

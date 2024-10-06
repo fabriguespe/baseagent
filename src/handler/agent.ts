@@ -45,6 +45,7 @@ function generateSystemPrompt(context: HandlerContext) {
     }))
   )}\n 
   This group app has many commands available: ${JSON.stringify(commands)}\n
+  - If the swap is not like the examples, then suggest how to do it.
   If the user asks about performing an action and you can think of a command that would help, answer directly with the command and nothing else. Populate the command with the correct or random values. Always return commands with real values only, using usernames with @ and excluding addresses.\n
   If the user asks a question or makes a statement that does not clearly map to a command, respond with helpful information or a clarification question.\n
   The message was sent by @${sender?.username}
