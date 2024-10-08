@@ -13,6 +13,7 @@ try {
     console.log(file);
   });
 } catch (error: any) {
+  //2
   console.error("Error reading .cache directory:", error.message);
 }
 run(async (context: HandlerContext) => {
