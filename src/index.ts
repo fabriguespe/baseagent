@@ -1,8 +1,20 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
 import { handler as agent } from "./handler/agent.js";
 import { handleSwap } from "./handler/swap.js";
-import { commands } from "./commands.js";
+import fs from "fs";
+import path from "path";
 
+const cacheDir = path.join(process.cwd(), ".cache");
+
+try {
+  const files = fs.readdirSync(cacheDir);
+  console.log("Files in .cache directory:");
+  files.forEach((file) => {
+    console.log(file);
+  });
+} catch (error: any) {
+  console.error("Error reading .cache directory:", error.message);
+}
 run(async (context: HandlerContext) => {
   const {
     message: {
@@ -10,6 +22,7 @@ run(async (context: HandlerContext) => {
       content: { content: text, command, params },
     },
   } = context;
+
   if (typeId !== "text") return;
 
   if (text.includes("@swap")) {
