@@ -18,6 +18,10 @@ Format examples:
 /swap 0.1 eth usdt
 ```
 
+# Base Frame
+
+> BaseFrame [home](https://messagekit.ephemerahq.com/directory/baseframe) | [source code](https://github.com/fabriguespe/base-frame)
+
 ---
 
 Made with ❤️ by [Ephemera](https://ephemerahq.com).
