@@ -20,7 +20,9 @@ Format examples:
 
 # Base Frame
 
-> BaseFrame [home](https://messagekit.ephemerahq.com/directory/baseframe) | [source code](https://github.com/fabriguespe/base-frame)
+This bot uses base frame
+
+[home](https://messagekit.ephemerahq.com/directory/baseframe) | [source code](https://github.com/fabriguespe/base-frame)
 
 ---
 
