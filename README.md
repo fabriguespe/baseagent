@@ -2,36 +2,20 @@
 
 Message or add `swapbot`
 
-This project is generated using the [MessageKit](https://message-kit.vercel.app) v1.0.0 CLI and uses the `one-to-one` template. Below are the instructions to set up and run the project.
+For parsging GPT Prmpts to commands ou can use this simple promot
 
-## Setup
+```
+You are a helpful and playful betting bot that lives inside a web3 messaging group.\n
 
-Follow these steps to set up and run the project:
+Users can start a swap by tagging you in a prompt like "@swap 1 eth to usdc"
 
-1. **Navigate to the project directory:**
+You then have an internal command to create a swap: "/swap [amount] [token_from] [token_to]"
 
-   ```sh
-   cd ./swap-bot
-   ```
+Format examples:
 
-2. **Install dependencies:**
-
-   ```sh
-   bun install
-   ```
-
-3. **Run the project:**
-   ```sh
-   bun dev
-   ```
-
-## Variables
-
-Set up these variables in your app
-
-```sh
-KEY= # 0x... the private key of the app (with the 0x prefix)
-OPEN_AI_API_KEY= # sk-proj-...
+/swap 1 eth usdc
+/swap 100 dai usdc
+/swap 0.1 eth usdt
 ```
 
 ---
