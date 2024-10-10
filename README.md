@@ -20,4 +20,4 @@ Format examples:
 
 ---
 
-Made with ❤️ by [Ephemera](https://ephemerahq.com)
+Made with ❤️ by [Ephemera](https://ephemerahq.com).
