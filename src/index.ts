@@ -28,8 +28,6 @@ run(async (context: HandlerContext) => {
 
   if (text.includes("@swap")) {
     await agent(context);
-  } else if (text.startsWith("/")) {
-    await context.intent(text);
   } else if (
     text.startsWith("/swap") &&
     params.token_from &&
