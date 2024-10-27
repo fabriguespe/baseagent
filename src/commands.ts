@@ -1,5 +1,6 @@
 import type { CommandGroup } from "@xmtp/message-kit";
-import { handleSwap } from "./handler/swap.js";
+import { swapHandler } from "./handler/swap.js";
+import { sendCommand } from "./handler/send.js";
 
 export const commands: CommandGroup[] = [
   {
@@ -9,7 +10,7 @@ export const commands: CommandGroup[] = [
       {
         command: "/swap [amount] [token_from] [token_to]",
         triggers: ["/swap", "@swap"],
-        handler: handleSwap,
+        handler: swapHandler,
         description: "Exchange one type of cryptocurrency for another.",
         params: {
           amount: {
@@ -25,6 +26,28 @@ export const commands: CommandGroup[] = [
             default: "eth",
             type: "string",
             values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
+          },
+        },
+      },
+      {
+        command: "/send [amount] [token] [address]",
+        triggers: ["/send", "@send"],
+        handler: sendCommand,
+        description:
+          "Send a specific amount of a token to a specified address.",
+        params: {
+          amount: {
+            default: 10,
+            type: "number",
+          },
+          token: {
+            default: "eth",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
+          },
+          address: {
+            default: "",
+            type: "address",
           },
         },
       },

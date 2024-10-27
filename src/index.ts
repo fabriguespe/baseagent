@@ -1,32 +1,27 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { handler as agent } from "./handler/agent.js";
-import { handleSwap } from "./handler/swap.js";
-
-run(
-  async (context: HandlerContext) => {
-    const {
-      message: {
-        typeId,
-        content: { content: text, command, params },
-      },
-    } = context;
-
-    if (typeId !== "text") return;
-
-    if (text.includes("@swap")) {
-      await agent(context);
-    } else if (
-      text.startsWith("/swap") &&
-      params.token_from &&
-      params.token_to &&
-      params.amount
-    ) {
-      await handleSwap(context);
-    }
+run(async (context: HandlerContext) => {}, {
+  client: {
+    logging: process.env.NODE_ENV === "production" ? "debug" : "off",
   },
-  {
-    client: {
-      logging: "debug",
-    },
+});
+
+// Function to generate a URL with query parameters for transactions
+export function generateFrameURL(
+  baseUrl: string,
+  transaction_type: string,
+  params: any
+) {
+  // Filter out undefined parameters
+  let filteredParams: { [key: string]: any } = {};
+
+  for (const key in params) {
+    if (params[key] !== undefined) {
+      filteredParams[key] = params[key];
+    }
   }
-);
+  let queryParams = new URLSearchParams({
+    transaction_type,
+    ...filteredParams,
+  }).toString();
+  return `${baseUrl}?${queryParams}`;
+}
