@@ -1,13 +1,14 @@
 import type { CommandGroup } from "@xmtp/message-kit";
 import { handleSwap } from "./handler/swap.js";
+
 export const commands: CommandGroup[] = [
   {
     name: "Swap Bot",
     description: "Swap bot for base.",
-    triggers: ["/swap", "@swap", "@swapbot"],
     commands: [
       {
         command: "/swap [amount] [token_from] [token_to]",
+        triggers: ["/swap", "@swap"],
         handler: handleSwap,
         description: "Exchange one type of cryptocurrency for another.",
         params: {
