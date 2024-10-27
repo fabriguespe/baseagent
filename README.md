@@ -1,6 +1,6 @@
-# swap-bot
+# swapframe
 
-Message or add `swapbot`
+Message or add `swapframe.converse.xyz`
 
 For parsging GPT Prmpts to commands ou can use this simple promot
 
