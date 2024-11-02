@@ -1,6 +1,14 @@
-# swapframe
+# Base Bot
 
-Message or add `swapframe.converse.xyz`
+Message or add `basebot.converse.xyz`
+
+Example commands:
+
+```
+/send 1 eth to vitalik.eth
+@base tip @fabri
+@swap 1 eth to usdc
+```
 
 For parsging GPT Prmpts to commands ou can use this simple promot
 
@@ -18,11 +26,11 @@ Format examples:
 /swap 0.1 eth usdt
 ```
 
-# Base Frame
+### Base Tx Frame
 
 This bot uses base frame
 
-[home](https://messagekit.ephemerahq.com/directory/baseframe) | [source code](https://github.com/fabriguespe/base-frame)
+[home](https://messagekit.ephemerahq.com/directory/baseframe) | [source code](https://github.com/ephemerahq/base-tx-frame)
 
 ---
 

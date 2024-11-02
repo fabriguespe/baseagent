@@ -1,16 +1,16 @@
-import type { CommandGroup } from "@xmtp/message-kit";
-import { swapHandler } from "./handler/swap.js";
-import { sendCommand } from "./handler/send.js";
+import type { SkillGroup } from "@xmtp/message-kit";
+import { handler } from "./handler/transaction.js";
 
-export const commands: CommandGroup[] = [
+export const skills: SkillGroup[] = [
   {
     name: "Swap Bot",
+    tag: "@base",
     description: "Swap bot for base.",
-    commands: [
+    skills: [
       {
         command: "/swap [amount] [token_from] [token_to]",
-        triggers: ["/swap", "@swap"],
-        handler: swapHandler,
+        triggers: ["/swap"],
+        handler: handler,
         description: "Exchange one type of cryptocurrency for another.",
         params: {
           amount: {
@@ -30,14 +30,27 @@ export const commands: CommandGroup[] = [
         },
       },
       {
+        command: "/info [domain]",
+        triggers: ["/info"],
+        handler: handler,
+        description:
+          "Get detailed information about an ENS domain including owner, expiry date, and resolver.",
+        example: "/info nick.eth",
+        params: {
+          domain: {
+            type: "string",
+          },
+        },
+      },
+      {
         command: "/send [amount] [token] [address]",
-        triggers: ["/send", "@send"],
-        handler: sendCommand,
+        triggers: ["/send"],
+        handler: handler,
         description:
           "Send a specific amount of a token to a specified address.",
         params: {
           amount: {
-            default: 10,
+            default: 1,
             type: "number",
           },
           token: {

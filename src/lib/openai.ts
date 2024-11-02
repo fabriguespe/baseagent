@@ -1,15 +1,27 @@
-import OpenAI from "openai";
+import dotenv from "dotenv";
+dotenv.config();
 
+import OpenAI from "openai";
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
 
-export async function textGeneration(userPrompt: string, systemPrompt: string) {
-  let messages = [];
-  messages.push({
-    role: "system",
-    content: systemPrompt,
-  });
+export type ChatHistoryEntry = { role: string; content: string };
+export type ChatHistories = Record<string, ChatHistoryEntry[]>;
+
+let chatHistories: ChatHistories = {};
+export async function textGeneration(
+  address: string,
+  userPrompt: string,
+  systemPrompt: string
+) {
+  let messages = chatHistories[address] || [];
+  if (messages.length === 0) {
+    messages.push({
+      role: "system",
+      content: systemPrompt,
+    });
+  }
   messages.push({
     role: "user",
     content: userPrompt,
@@ -24,14 +36,9 @@ export async function textGeneration(userPrompt: string, systemPrompt: string) {
       role: "assistant",
       content: reply || "No response from OpenAI.",
     });
-    const cleanedReply = reply
-      ?.replace(/(\*\*|__)(.*?)\1/g, "$2")
-      ?.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$2")
-      ?.replace(/^#+\s*(.*)$/gm, "$1")
-      ?.replace(/`([^`]+)`/g, "$1")
-      ?.replace(/^`|`$/g, "");
-
-    return { reply: cleanedReply as string, history: messages };
+    const cleanedReply = responseParser(reply as string);
+    chatHistories[address] = messages;
+    return { reply: cleanedReply, history: messages };
   } catch (error) {
     console.error("Failed to fetch from OpenAI:", error);
     throw error;
@@ -74,3 +81,59 @@ export async function vision(imageData: Uint8Array, systemPrompt: string) {
     throw error;
   }
 }
+
+export async function processResponseWithSkill(
+  address: string,
+  reply: string,
+  context: any
+) {
+  let messages = reply
+    .split("\n")
+    .map((message: string) => responseParser(message))
+    .filter((message): message is string => message.length > 0);
+
+  console.log(messages);
+  for (const message of messages) {
+    if (message.startsWith("/")) {
+      const response = await context.skill(message);
+      if (response && response.message) {
+        let msg = responseParser(response.message);
+
+        if (!chatHistories[address]) {
+          chatHistories[address] = [];
+        }
+        chatHistories[address].push({
+          role: "system",
+          content: msg,
+        });
+
+        await context.send(response.message);
+      }
+    } else {
+      await context.send(message);
+    }
+  }
+}
+export function responseParser(message: string) {
+  let trimmedMessage = message;
+  // Remove bold and underline markdown
+  trimmedMessage = trimmedMessage?.replace(/(\*\*|__)(.*?)\1/g, "$2");
+  // Remove markdown links, keeping only the URL
+  trimmedMessage = trimmedMessage?.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$2");
+  // Remove markdown headers
+  trimmedMessage = trimmedMessage?.replace(/^#+\s*(.*)$/gm, "$1");
+  // Remove inline code formatting
+  trimmedMessage = trimmedMessage?.replace(/`([^`]+)`/g, "$1");
+  // Remove single backticks at the start or end of the message
+  trimmedMessage = trimmedMessage?.replace(/^`|`$/g, "");
+  // Remove leading and trailing whitespace
+  trimmedMessage = trimmedMessage?.replace(/^\s+|\s+$/g, "");
+  // Remove any remaining leading or trailing whitespace
+  trimmedMessage = trimmedMessage.trim();
+
+  return trimmedMessage;
+}
+
+export const clearChatHistories = () => {
+  chatHistories = {};
+};
