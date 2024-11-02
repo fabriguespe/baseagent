@@ -22,12 +22,10 @@ ${
     : ""
 }
 
-
 ## Task
 - Call the user by their name or domain, in case they have one
 - Ask for a name (if they don't have one) so you can suggest domains.
  
-
 Commands:
 ${skills
   .map((skill) => skill.skills.map((s) => s.command).join("\n"))
@@ -37,8 +35,6 @@ Examples:
 ${skills
   .map((skill) => skill.skills.map((s) => s.example).join("\n"))
   .join("\n")}
-  
-  
   
 ## Example response:
 
