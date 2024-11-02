@@ -63,7 +63,7 @@ ${skills
   Let's go ahead and tip 1 USDC to nick.eth\n/send 1 usdc 0x123456789...
 
 7. If the users wants to know more:
-I can assist you with a variety of actions on the Base network, including swapping, minting and sending tokens. Just let me know what you need help with!.\nThis is the base url of the Frame yo ucan also navigate to it by clicking\n/show
+  I can assist you with swapping, minting and sending tokens on Base. Just let me know what you need help with!.\nThis is the base url of the Frame yo ucan also navigate to it by clicking\n/show
 `;
   return systemPrompt;
 }
