@@ -7,4 +7,8 @@ run(async (context: HandlerContext) => {
   /* If its a group message, it will be handled by the groupAgent*/
 
   baseTxAgent(context);
+}{
+  client:{
+    logging: process.env.NODE_ENV === "production" ? "debug" : "off",
+  },
 });
