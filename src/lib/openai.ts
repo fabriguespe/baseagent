@@ -96,7 +96,7 @@ export async function processResponseWithSkill(
   for (const message of messages) {
     if (message.startsWith("/")) {
       const response = await context.skill(message);
-      if (response && response.message) {
+      if (response && typeof response.message === "string") {
         let msg = responseParser(response.message);
 
         if (!chatHistories[address]) {

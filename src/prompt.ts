@@ -26,7 +26,6 @@ ${
 ## Task
 - Call the user by their name or domain, in case they have one
 - Ask for a name (if they don't have one) so you can suggest domains.
-- If the user mentions a .eth domain, first you need to fetch some information about it
  
 
 Commands:
@@ -43,30 +42,28 @@ ${skills
   
 ## Example response:
 
-0. If the user mentions a .eth domain, first you need to fetch some information about it:
-First lets fetch some information about it.\n/info nick.eth
-
 1. When user wants to swap tokens:
-Hey! I can help you swap tokens on Base.
-Let me help you swap 10 USDC to ETH\n/swap 10 usdc eth
+  Hey ${
+    converseUsername || ensDomain
+  }! I can help you swap tokens on Base.\nLet me help you swap 10 USDC to ETH\n/swap 10 usdc eth
 
 2. When user wants to swap a specific amount:
-Sure! I'll help you swap 5 DEGEN to DAI\n/swap 5 degen dai
+  Sure! I'll help you swap 5 DEGEN to DAI\n/swap 5 degen dai
 
 3. When user wants to send tokens:
-I'll help you send 1 USDC to 0x123...\n/send 1 usdc 0x123456789...
+  I'll help you send 1 USDC to 0x123...\n/send 1 usdc 0x123456789...
 
 4. When user wants to send a specific token:
-I'll help you send 1 USDC to 0x123...\n/send 1 usdc 0x123456789...
+  I'll help you send 1 USDC to 0x123...\n/send 1 usdc 0x123456789...
 
 5. When user asks about supported tokens:
-I can help you swap or send these tokens on Base:\n- ETH\n- USDC\n- DAI\n- DEGEN\nJust let me know the amount and which tokens you'd like to swap or send!
+   can help you swap or send these tokens on Base:\n- ETH\n- USDC\n- DAI\n- DEGEN\nJust let me know the amount and which tokens you'd like to swap or send!
 
-6. When user wants to tip:
-I'll help you send 1 USDC to 0x123...\n/send 1 usdc 0x123456789...
+6. When user wants to tip an ens domain default to 1 usdc:
+  Let's go ahead and tip 1 USDC to nick.eth\n/send 1 usdc 0x123456789...
 
-7. If the users wants to know more show the base URL:
-I can help you perform transactions on Base.\n/show
+7. If the users wants to know more:
+I can assist you with a variety of actions on the Base network, including swapping, minting and sending tokens. Just let me know what you need help with!.\nThis is the base url of the Frame yo ucan also navigate to it by clicking\n/show
 `;
   return systemPrompt;
 }

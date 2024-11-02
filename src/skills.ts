@@ -1,5 +1,5 @@
 import type { SkillGroup } from "@xmtp/message-kit";
-import { handler } from "./handler/transaction.js";
+import { handler } from "./handler/base.js";
 
 export const skills: SkillGroup[] = [
   {
@@ -10,6 +10,7 @@ export const skills: SkillGroup[] = [
       {
         command: "/swap [amount] [token_from] [token_to]",
         triggers: ["/swap"],
+        example: "/swap 10 usdc eth",
         handler: handler,
         description: "Exchange one type of cryptocurrency for another.",
         params: {
@@ -30,20 +31,8 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/info [domain]",
-        triggers: ["/info"],
-        handler: handler,
-        description:
-          "Get detailed information about an ENS domain including owner, expiry date, and resolver.",
-        example: "/info nick.eth",
-        params: {
-          domain: {
-            type: "string",
-          },
-        },
-      },
-      {
-        command: "/send [amount] [token] [address]",
+        command: "/send [amount] [token] [username]",
+        example: "/send 1 eth vitalik.eth",
         triggers: ["/send"],
         handler: handler,
         description:
@@ -58,11 +47,18 @@ export const skills: SkillGroup[] = [
             type: "string",
             values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
           },
-          address: {
+          username: {
             default: "",
-            type: "address",
+            type: "string",
           },
         },
+      },
+      {
+        command: "/show",
+        triggers: ["/show"],
+        handler: handler,
+        params: {},
+        description: "Show the base url",
       },
     ],
   },

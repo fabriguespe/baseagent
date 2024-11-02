@@ -4,7 +4,7 @@ import { agent_prompt } from "../prompt.js";
 import { processResponseWithSkill, textGeneration } from "../lib/openai.js";
 
 export const ensUrl = "https://app.ens.domains/";
-// Main handler function for processing commands
+
 export async function handler(context: HandlerContext) {
   const {
     message: {
@@ -17,6 +17,7 @@ export async function handler(context: HandlerContext) {
     // Destructure and validate parameters for the send command
     const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
     let senderInfo = await getUserInfo(username);
+    console.log(username, senderInfo);
     if (!amountSend || !tokenSend || !senderInfo) {
       context.reply(
         "Missing required parameters. Please provide amount, token, and username."
@@ -24,7 +25,10 @@ export async function handler(context: HandlerContext) {
       return;
     }
     let sendUrl = `${baseUrl}/?transaction_type=send&amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
-    context.send(`${sendUrl}`);
+    return {
+      code: 200,
+      message: sendUrl,
+    };
   } else if (command == "swap") {
     // Destructure and validate parameters for the swap command
     const { amount, token_from, token_to } = params; // [!code hl] // [!code focus]
@@ -37,51 +41,15 @@ export async function handler(context: HandlerContext) {
     }
 
     let swapUrl = `${baseUrl}/?transaction_type=swap&token_from=${token_from}&token_to=${token_to}&amount=${amount}`;
-    context.send(`${swapUrl}`);
-  } else if (command == "info") {
-    const { domain } = params;
-
-    const data = await getUserInfo(domain);
-    if (!data) {
-      return {
-        code: 404,
-        message: "Domain not found.",
-      };
-    }
-
-    const formattedData = {
-      Address: data?.address,
-      "Avatar URL": data?.ensInfo?.avatar,
-      Description: data?.ensInfo?.description,
-      ENS: data?.ensDomain,
-      "Primary ENS": data?.ensInfo?.ens_primary,
-      GitHub: data?.ensInfo?.github,
-      Resolver: data?.ensInfo?.resolverAddress,
-      Twitter: data?.ensInfo?.twitter,
-      URL: `${ensUrl}${domain}`,
+    return {
+      code: 200,
+      message: swapUrl,
     };
-
-    let message = "Domain information:\n\n";
-    for (const [key, value] of Object.entries(formattedData)) {
-      if (value) {
-        message += `${key}: ${value}\n`;
-      }
-    }
-    message = message.trim();
-    if (
-      await isOnXMTP(
-        context.v2client,
-        data?.ensInfo?.ens,
-        data?.ensInfo?.address
-      )
-    ) {
-      await context.send(
-        `Ah, this domains is in XMTP, you can message it directly: https://converse.xyz/dm/${domain}`
-      );
-    }
-    return { code: 200, message };
   } else if (command == "show") {
-    context.reply(`${baseUrl.replace("/transaction", "")}`);
+    return {
+      code: 200,
+      message: `${baseUrl.replace("/transaction", "")}`,
+    };
   }
 }
 
