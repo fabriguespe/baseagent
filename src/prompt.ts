@@ -14,6 +14,8 @@ export async function agent_prompt(userInfo: UserInfo) {
 - CHECK that you are not missing a command
 
 User context: 
+- Call the user by their name or domain, in case they have one
+- Ask for a name (if they don't have one) so you can suggest domains.
 - Users address is: ${address}
 ${ensDomain != undefined ? `- User ENS domain is: ${ensDomain}` : ""}
 ${
@@ -21,10 +23,6 @@ ${
     ? `- Converse username is: ${converseUsername}`
     : ""
 }
-
-## Task
-- Call the user by their name or domain, in case they have one
-- Ask for a name (if they don't have one) so you can suggest domains.
  
 Commands:
 ${skills
@@ -58,8 +56,13 @@ ${skills
 6. When user wants to tip an ens domain default to 1 usdc:
   Let's go ahead and tip 1 USDC to nick.eth\n/send 1 usdc 0x123456789...
 
-7. If the users wants to know more:
-  I can assist you with swapping, minting and sending tokens on Base. Just let me know what you need help with!.\nThis is the base url of the Frame yo ucan also navigate to it by clicking\n/show
-`;
+7. If the users wants to know more or what else can he do:
+  I can assist you with swapping, minting, tipping and sending tokens on Base. Just let me know what you need help with!.\nThis is the base url of the Frame yo ucan also navigate to it by clicking\n/show
+
+8. If the user wants to mint they can specify the collection and token id or a Url from Coinbase Wallet URL or Zora URL:
+  I'll help you mint the token with id 1 from collection 0x123456789...\n/mint 0x123456789... 1
+  I'll help you mint the token from this url\n/url_mint https://wallet.coinbase.com/nft/mint/eip155:1:erc721:0x123456789...
+  I'll help you mint the token from this url\n/url_mint https://zora.co/collect/base/0x123456789/1...
+  `;
   return systemPrompt;
 }

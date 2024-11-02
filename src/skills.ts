@@ -1,5 +1,6 @@
 import type { SkillGroup } from "@xmtp/message-kit";
 import { handler } from "./handler/base.js";
+import { urlMint } from "./handler/base.js";
 
 export const skills: SkillGroup[] = [
   {
@@ -27,6 +28,37 @@ export const skills: SkillGroup[] = [
             default: "eth",
             type: "string",
             values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
+          },
+        },
+      },
+      // Zora mints
+      {
+        command: "/url_mint [url]",
+        triggers: ["/url_mint"],
+        handler: urlMint,
+        description:
+          "Return a Frame to mint From a Zora URL or Coinbase Wallet URL",
+        example: "/url_mint https://zora.co/collect/base/0x123456789/1...",
+        params: {
+          url: {
+            type: "url",
+          },
+        },
+      },
+      {
+        command: "/mint [collection] [token_id]",
+        example: "/mint 0x73a333cb82862d4f66f0154229755b184fb4f5b0 1",
+        triggers: ["/mint"],
+        handler: handler,
+        description: "Mint a specific token from a collection.",
+        params: {
+          collection: {
+            default: "0x73a333cb82862d4f66f0154229755b184fb4f5b0",
+            type: "string",
+          },
+          token_id: {
+            default: "1",
+            type: "number",
           },
         },
       },
