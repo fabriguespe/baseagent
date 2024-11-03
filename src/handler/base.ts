@@ -45,6 +45,11 @@ export async function handler(context: HandlerContext) {
       code: 200,
       message: mintUrl,
     };
+  } else if (command == "drip") {
+    return {
+      code: 200,
+      message: "drip",
+    };
   } else if (command == "swap") {
     // Destructure and validate parameters for the swap command
     const { amount, token_from, token_to } = params; // [!code hl] // [!code focus]
