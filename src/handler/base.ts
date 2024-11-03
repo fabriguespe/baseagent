@@ -1,7 +1,12 @@
 import { HandlerContext } from "@xmtp/message-kit";
-import { getUserInfo, isOnXMTP } from "../lib/resolver.js";
-import { agent_prompt } from "../prompt.js";
-import { processResponseWithSkill, textGeneration } from "../lib/openai.js";
+import { getUserInfo } from "../lib/resolver.js";
+import { clearChatHistories } from "../lib/openai.js";
+import {
+  Network,
+  LearnWeb3Client,
+  BASE_TX_FRAME_URL,
+} from "../lib/learnweb3.js";
+import { getRedisClient } from "../lib/redis.js";
 
 export const ensUrl = "https://app.ens.domains/";
 
@@ -9,6 +14,7 @@ export async function handler(context: HandlerContext) {
   const {
     message: {
       content: { command, params },
+      sender,
     },
   } = context;
   const baseUrl = "https://base-tx-frame.vercel.app/transaction";
@@ -45,11 +51,101 @@ export async function handler(context: HandlerContext) {
       code: 200,
       message: mintUrl,
     };
+  } else if (command == "url_mint") {
+    const MINT_URL = "https://xmtp-mintiaml.vercel.app";
+    const { url } = context.message.content.params;
+
+    const urlPatterns = [
+      {
+        pattern: /https?:\/\/zora\.co\/collect\/([^:]+):([^/]+)\/(\d+)/,
+        transform: (chain: string, address: string, tokenId: string) =>
+          `${MINT_URL}/${chain}/${address}/${tokenId}`,
+      },
+      {
+        pattern:
+          /https?:\/\/wallet\.coinbase\.com\/nft\/mint\/eip155:(\d+):erc721:([^:]+)/,
+        transform: (chain: string, address: string) =>
+          `${MINT_URL}/eip155/${chain}/erc721/${address}`,
+      },
+      {
+        pattern:
+          /https?:\/\/wallet\.coinbase\.com\/nft\/mint\/eip155:(\d+):erc1155:([^:]+):(\d+)/,
+        transform: (chain: string, address: string, tokenId: string) =>
+          `${MINT_URL}/eip155/${chain}/erc1155/${address}/${tokenId}`,
+      },
+    ];
+    //https://wallet.coinbase.com/nft/mint/eip155:8453:erc1155:0x9a83e7b27b8a9b68e8dc665a0049f2f004287a20:1
+    //https://wallet.coinbase.com/nft/mint/eip155:8453:erc721:0x2a8e46E78BA9667c661326820801695dcf1c403E
+    //https://zora.co/collect/base:0xa902601ece8b81d906b7deceb67f5badcbdff7df/1
+
+    //https://xmtp-mintiaml.vercel.app/eip155/8453/erc721/0xf16755b43eE1a458161f0faE5a9124729f4f6B1B
+    let parsedUrl = null;
+    for (const { pattern, transform } of urlPatterns) {
+      const match = url.match(pattern);
+
+      if (match) {
+        parsedUrl = transform(match[1], match[2], match[3]);
+        break;
+      }
+    }
+    if (parsedUrl) {
+      await context.send("Here is your Mint Frame URL: ");
+      await context.send(parsedUrl);
+      return;
+    } else {
+      await context.send(
+        "Error: Unable to parse the provided URL. Please ensure you're sending a valid Zora or Coinbase Wallet URL."
+      );
+      return;
+    }
   } else if (command == "drip") {
-    return {
-      code: 200,
-      message: "drip",
-    };
+    const { network } = params;
+    if (!network) {
+      await context.send("Invalid network. Please select a valid option.");
+      return;
+    }
+    const redisClient = await getRedisClient();
+
+    const learnWeb3Client = new LearnWeb3Client();
+    // Fetch supported networks from Redis cache or API
+    let supportedNetworks: Network[];
+    const cachedSupportedNetworksData = await redisClient.get(
+      "supported-networks"
+    );
+    supportedNetworks = JSON.parse(
+      cachedSupportedNetworksData!
+    ).supportedNetworks;
+    await context.send(
+      "Your testnet tokens are being processed. Please wait a moment for the transaction to process."
+    );
+    const selectedNetwork = supportedNetworks.find(
+      (n) => n.networkName.toLowerCase() === network.toLowerCase()
+    );
+    const result = await learnWeb3Client.dripTokens(
+      selectedNetwork!.networkId,
+      sender.address
+    );
+
+    if (!result.ok) {
+      await context.send(
+        `❌ Sorry, there was an error processing your request:\n\n"${result.error!}"`
+      );
+      return;
+    }
+
+    await context.send("Here's your transaction receipt:");
+    await context.send(
+      `${BASE_TX_FRAME_URL}?txLink=${result.value}&networkLogo=${
+        selectedNetwork?.networkLogo
+      }&networkName=${selectedNetwork?.networkName.replaceAll(
+        " ",
+        "-"
+      )}&tokenName=${selectedNetwork?.tokenName}&amount=${
+        selectedNetwork?.dripAmount
+      }`
+    );
+    // Clear any in-memory cache or state related to the prompt
+    clearChatHistories();
   } else if (command == "swap") {
     // Destructure and validate parameters for the swap command
     const { amount, token_from, token_to } = params; // [!code hl] // [!code focus]
@@ -74,83 +170,4 @@ export async function handler(context: HandlerContext) {
   }
 }
 
-export async function baseTxAgent(context: HandlerContext) {
-  if (!process?.env?.OPEN_AI_API_KEY) {
-    console.log("No OPEN_AI_API_KEY found in .env");
-    return;
-  }
-
-  const {
-    message: {
-      content: { content, params },
-      sender,
-    },
-  } = context;
-
-  try {
-    let userPrompt = params?.prompt ?? content;
-    const userInfo = await getUserInfo(sender.address);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
-    const { reply } = await textGeneration(
-      sender.address,
-      userPrompt,
-      await agent_prompt(userInfo)
-    );
-    await processResponseWithSkill(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.reply("An error occurred while processing your request.");
-  }
-}
-
-export async function urlMint(context: HandlerContext) {
-  const MINT_URL = "https://xmtp-mintiaml.vercel.app";
-  const { url } = context.message.content.params;
-
-  const urlPatterns = [
-    {
-      pattern: /https?:\/\/zora\.co\/collect\/([^:]+):([^/]+)\/(\d+)/,
-      transform: (chain: string, address: string, tokenId: string) =>
-        `${MINT_URL}/${chain}/${address}/${tokenId}`,
-    },
-    {
-      pattern:
-        /https?:\/\/wallet\.coinbase\.com\/nft\/mint\/eip155:(\d+):erc721:([^:]+)/,
-      transform: (chain: string, address: string) =>
-        `${MINT_URL}/eip155/${chain}/erc721/${address}`,
-    },
-    {
-      pattern:
-        /https?:\/\/wallet\.coinbase\.com\/nft\/mint\/eip155:(\d+):erc1155:([^:]+):(\d+)/,
-      transform: (chain: string, address: string, tokenId: string) =>
-        `${MINT_URL}/eip155/${chain}/erc1155/${address}/${tokenId}`,
-    },
-  ];
-  //https://wallet.coinbase.com/nft/mint/eip155:8453:erc1155:0x9a83e7b27b8a9b68e8dc665a0049f2f004287a20:1
-  //https://wallet.coinbase.com/nft/mint/eip155:8453:erc721:0x2a8e46E78BA9667c661326820801695dcf1c403E
-  //https://zora.co/collect/base:0xa902601ece8b81d906b7deceb67f5badcbdff7df/1
-
-  //https://xmtp-mintiaml.vercel.app/eip155/8453/erc721/0xf16755b43eE1a458161f0faE5a9124729f4f6B1B
-  let parsedUrl = null;
-  for (const { pattern, transform } of urlPatterns) {
-    const match = url.match(pattern);
-
-    if (match) {
-      parsedUrl = transform(match[1], match[2], match[3]);
-      break;
-    }
-  }
-  if (parsedUrl) {
-    await context.send("Here is your Mint Frame URL: ");
-    await context.send(parsedUrl);
-    return;
-  } else {
-    await context.send(
-      "Error: Unable to parse the provided URL. Please ensure you're sending a valid Zora or Coinbase Wallet URL."
-    );
-    return;
-  }
-}
+export async function urlMint(context: HandlerContext) {}

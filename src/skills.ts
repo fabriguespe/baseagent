@@ -1,6 +1,5 @@
 import type { SkillGroup } from "@xmtp/message-kit";
 import { handler } from "./handler/base.js";
-import { urlMint } from "./handler/base.js";
 
 export const skills: SkillGroup[] = [
   {
@@ -31,11 +30,29 @@ export const skills: SkillGroup[] = [
           },
         },
       },
+      {
+        command: "/drip [network] [address]",
+        triggers: ["/drip"],
+        handler: handler,
+        example: "/drip base 0x123456789",
+        description: "Drip testnet tokens to a specified address.",
+        params: {
+          network: {
+            default: "base",
+            type: "string",
+            values: ["base_sepolia", "base_goerli"],
+          },
+          address: {
+            default: "",
+            type: "address",
+          },
+        },
+      },
       // Zora mints
       {
         command: "/url_mint [url]",
         triggers: ["/url_mint"],
-        handler: urlMint,
+        handler: handler,
         description:
           "Return a Frame to mint From a Zora URL or Coinbase Wallet URL",
         example: "/url_mint https://zora.co/collect/base/0x123456789/1...",

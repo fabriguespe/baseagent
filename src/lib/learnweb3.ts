@@ -1,9 +1,31 @@
 import axios from "axios";
 
+export const BASE_TX_FRAME_URL = "https://tx-receipt.vercel.app";
 export const SUPPORTED_NETWORKS = [
+  "arbitrum_goerli",
+  "arbitrum_sepolia",
   "base_goerli",
   "base_sepolia",
   "base_sepolia_usdc",
+  "celo_alfajores",
+  "fantom_testnet",
+  "goerli",
+  "holesky",
+  "linea_goerli",
+  "linea_sepolia",
+  "manta_testnet",
+  "mode_sepolia",
+  "morph_sepolia",
+  "optimism_goerli",
+  "optimism_sepolia",
+  "polygon_amoy",
+  "polygon_mumbai",
+  "polygon_zkevm",
+  "scroll_sepolia",
+  "sepolia",
+  "taiko_jolnir",
+  "zksync_sepolia",
+  "zora_sepolia",
 ] as const;
 
 export const CLAIM_EVERY = 24 * 60 * 60 * 1000; // 24 hours

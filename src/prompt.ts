@@ -1,45 +1,30 @@
 import { skills } from "./skills.js";
-import type { UserInfo } from "./lib/resolver.js";
+import { UserInfo, PROMPT_USER_CONTENT } from "./lib/resolver.js";
+import { PROMPT_RULES, PROMPT_SKILLS_AND_EXAMPLES } from "./lib/openai.js";
 
 export async function agent_prompt(userInfo: UserInfo) {
-  let { address, ensDomain, converseUsername } = userInfo;
+  let { address, ensDomain, converseUsername, preferredName } = userInfo;
 
-  const systemPrompt = `You are a helpful and playful agent called @base that lives inside a web3 messaging app called Converse.
-- You can respond with multiple messages if needed. Each message should be separated by a newline character.
-- You can trigger commands by only sending the command in a newline message.
-- Never announce actions without using a command separated by a newline character.
-- Only provide answers based on verified information.
-- Dont answer in markdown format, just answer in plaintext.
-- Do not make guesses or assumptions
-- CHECK that you are not missing a command
+  //Update the name of the agent with predefined prompt
+  let systemPrompt = PROMPT_RULES.replace(
+    "{NAME}",
+    skills?.[0]?.tag ?? "@base"
+  );
 
-User context: 
-- Call the user by their name or domain, in case they have one
-- Ask for a name (if they don't have one) so you can suggest domains.
-- Users address is: ${address}
-${ensDomain != undefined ? `- User ENS domain is: ${ensDomain}` : ""}
-${
-  converseUsername != undefined
-    ? `- Converse username is: ${converseUsername}`
-    : ""
-}
- 
-Commands:
-${skills
-  .map((skill) => skill.skills.map((s) => s.command).join("\n"))
-  .join("\n")}
+  //Add user context to the prompt
+  systemPrompt += PROMPT_USER_CONTENT(address, ensDomain, converseUsername);
 
-Examples:
-${skills
-  .map((skill) => skill.skills.map((s) => s.example).join("\n"))
-  .join("\n")}
+  //Add skills and examples to the prompt
+  systemPrompt += PROMPT_SKILLS_AND_EXAMPLES(skills);
+
+  //Add example response to the prompt
+  systemPrompt += `
+## Task
   
 ## Example response:
 
 1. When user wants to swap tokens:
-  Hey ${
-    converseUsername || ensDomain
-  }! I can help you swap tokens on Base.\nLet me help you swap 10 USDC to ETH\n/swap 10 usdc eth
+  Hey ${preferredName}! I can help you swap tokens on Base.\nLet me help you swap 10 USDC to ETH\n/swap 10 usdc eth
 
 2. When user wants to swap a specific amount:
   Sure! I'll help you swap 5 DEGEN to DAI\n/swap 5 degen dai
@@ -57,12 +42,16 @@ ${skills
   Let's go ahead and tip 1 USDC to nick.eth\n/send 1 usdc 0x123456789...
 
 7. If the users wants to know more or what else can he do:
-  I can assist you with swapping, minting, tipping and sending tokens on Base. Just let me know what you need help with!.\nThis is the base url of the Frame yo ucan also navigate to it by clicking\n/show
+  I can assist you with swapping, minting, tipping, dripping testnet tokens and sending tokens on Base. Just let me know what you need help with!.
 
 8. If the user wants to mint they can specify the collection and token id or a Url from Coinbase Wallet URL or Zora URL:
   I'll help you mint the token with id 1 from collection 0x123456789...\n/mint 0x123456789... 1
   I'll help you mint the token from this url\n/url_mint https://wallet.coinbase.com/nft/mint/eip155:1:erc721:0x123456789...
   I'll help you mint the token from this url\n/url_mint https://zora.co/collect/base/0x123456789/1...
-  `;
+  
+ 9. If the user wants testnet tokens:
+  I can help you drip testnet tokens to your address. Just let me know how many and which network you'd like to drip to.
+  /drip base_sepolia 0x123456789...
+  /drip base_goerli 0x123456789...`;
   return systemPrompt;
 }

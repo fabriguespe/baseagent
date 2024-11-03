@@ -6,49 +6,32 @@ Prompt:
 
 ```jsx
 import { skills } from "./skills.js";
-import type { UserInfo } from "./lib/resolver.js";
+import { UserInfo, PROMPT_USER_CONTENT } from "./lib/resolver.js";
+import { PROMPT_RULES, PROMPT_SKILLS_AND_EXAMPLES } from "./lib/openai.js";
 
 export async function agent_prompt(userInfo: UserInfo) {
-  let { address, ensDomain, converseUsername } = userInfo;
+  let { address, ensDomain, converseUsername, preferredName } = userInfo;
 
-  const systemPrompt = `You are a helpful and playful agent called @base that lives inside a web3 messaging app called Converse.
-- You can respond with multiple messages if needed. Each message should be separated by a newline character.
-- You can trigger commands by only sending the command in a newline message.
-- Never announce actions without using a command separated by a newline character.
-- Only provide answers based on verified information.
-- Dont answer in markdown format, just answer in plaintext.
-- Do not make guesses or assumptions
-- CHECK that you are not missing a command
+  //Update the name of the agent with predefined prompt
+  let systemPrompt = PROMPT_RULES.replace(
+    "{NAME}",
+    skills?.[0]?.tag ?? "@base"
+  );
 
-User context:
-- Users address is: ${address}
-${ensDomain != undefined ? `- User ENS domain is: ${ensDomain}` : ""}
-${
-  converseUsername != undefined
-    ? `- Converse username is: ${converseUsername}`
-    : ""
-}
+  //Add user context to the prompt
+  systemPrompt += PROMPT_USER_CONTENT(address, ensDomain, converseUsername);
 
+  //Add skills and examples to the prompt
+  systemPrompt += PROMPT_SKILLS_AND_EXAMPLES(skills);
+
+  systemPrompt += `
 ## Task
-- Call the user by their name or domain, in case they have one
-- Ask for a name (if they don't have one) so you can suggest domains.
 
-Commands:
-${skills
-  .map((skill) => skill.skills.map((s) => s.command).join("\n"))
-  .join("\n")}
-
-Examples:
-${skills
-  .map((skill) => skill.skills.map((s) => s.example).join("\n"))
-  .join("\n")}
 
 ## Example response:
 
 1. When user wants to swap tokens:
-  Hey ${
-    converseUsername || ensDomain
-  }! I can help you swap tokens on Base.\nLet me help you swap 10 USDC to ETH\n/swap 10 usdc eth
+  Hey ${preferredName}! I can help you swap tokens on Base.\nLet me help you swap 10 USDC to ETH\n/swap 10 usdc eth
 
 2. When user wants to swap a specific amount:
   Sure! I'll help you swap 5 DEGEN to DAI\n/swap 5 degen dai
@@ -142,11 +125,12 @@ export const skills: SkillGroup[] = [
 ];
 ```
 
-### Base Tx Frame
+### Frames Used
 
 This bot uses base frame
 
-[home](https://messagekit.ephemerahq.com/directory/baseframe) | [source code](https://github.com/ephemerahq/base-tx-frame)
+[Base Tx Frame](https://messagekit.ephemerahq.com/directory/basetxframe)
+[Base Receipt Frame](https://messagekit.ephemerahq.com/directory/txreceipt)
 
 ---
 
