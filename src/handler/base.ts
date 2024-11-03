@@ -1,6 +1,6 @@
 import { HandlerContext } from "@xmtp/message-kit";
 import { getUserInfo } from "../lib/resolver.js";
-import { clearChatHistories } from "../lib/openai.js";
+import { clearMemory } from "../lib/openai.js";
 import {
   Network,
   LearnWeb3Client,
@@ -145,7 +145,7 @@ export async function handler(context: HandlerContext) {
       }`
     );
     // Clear any in-memory cache or state related to the prompt
-    clearChatHistories();
+    clearMemory();
   } else if (command == "swap") {
     // Destructure and validate parameters for the swap command
     const { amount, token_from, token_to } = params; // [!code hl] // [!code focus]

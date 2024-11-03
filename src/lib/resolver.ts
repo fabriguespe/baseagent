@@ -121,15 +121,14 @@ export const isOnXMTP = async (
   if (address) return (await client.canMessage([address])).length > 0;
 };
 
-export const PROMPT_USER_CONTENT = (
-  address: string | undefined,
-  ensDomain: string | undefined,
-  converseUsername: string | undefined
-) => {
+export const PROMPT_USER_CONTENT = (userInfo: UserInfo) => {
+  let { address, ensDomain, converseUsername, preferredName } = userInfo;
   let prompt = `User context: 
+- Start by fetch their domain from or Convese username
 - Call the user by their name or domain, in case they have one
 - Ask for a name (if they don't have one) so you can suggest domains.
 - Users address is: ${address}`;
+  if (preferredName) prompt += `\n- Users name is: ${preferredName}`;
   if (ensDomain) prompt += `\n- User ENS domain is: ${ensDomain}`;
   if (converseUsername)
     prompt += `\n- Converse username is: ${converseUsername}`;

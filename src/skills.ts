@@ -10,7 +10,7 @@ export const skills: SkillGroup[] = [
       {
         command: "/swap [amount] [token_from] [token_to]",
         triggers: ["/swap"],
-        example: "/swap 10 usdc eth",
+        examples: ["/swap 10 usdc eth", "/swap 1 dai usdc"],
         handler: handler,
         description: "Exchange one type of cryptocurrency for another.",
         params: {
@@ -34,7 +34,10 @@ export const skills: SkillGroup[] = [
         command: "/drip [network] [address]",
         triggers: ["/drip"],
         handler: handler,
-        example: "/drip base 0x123456789",
+        examples: [
+          "/drip base_sepolia 0x123456789",
+          "/drip base_goerli 0x123456789",
+        ],
         description: "Drip testnet tokens to a specified address.",
         params: {
           network: {
@@ -53,9 +56,9 @@ export const skills: SkillGroup[] = [
         command: "/url_mint [url]",
         triggers: ["/url_mint"],
         handler: handler,
+        examples: ["/url_mint https://zora.co/collect/base/0x123456789/1..."],
         description:
           "Return a Frame to mint From a Zora URL or Coinbase Wallet URL",
-        example: "/url_mint https://zora.co/collect/base/0x123456789/1...",
         params: {
           url: {
             type: "url",
@@ -64,7 +67,7 @@ export const skills: SkillGroup[] = [
       },
       {
         command: "/mint [collection] [token_id]",
-        example: "/mint 0x73a333cb82862d4f66f0154229755b184fb4f5b0 1",
+        examples: ["/mint 0x73a333cb82862d4f66f0154229755b184fb4f5b0 1"],
         triggers: ["/mint"],
         handler: handler,
         description: "Mint a specific token from a collection.",
@@ -81,7 +84,7 @@ export const skills: SkillGroup[] = [
       },
       {
         command: "/send [amount] [token] [username]",
-        example: "/send 1 eth vitalik.eth",
+        examples: ["/send 1 eth vitalik.eth", "/send 1 usdc 0x123456789..."],
         triggers: ["/send"],
         handler: handler,
         description:
@@ -105,6 +108,7 @@ export const skills: SkillGroup[] = [
       {
         command: "/show",
         triggers: ["/show"],
+        examples: ["/show"],
         handler: handler,
         params: {},
         description: "Show the base url",
