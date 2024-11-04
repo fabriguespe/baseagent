@@ -13,10 +13,7 @@ export async function agent_prompt(userInfo: UserInfo) {
   let { address, ensDomain, converseUsername, preferredName } = userInfo;
 
   //Update the name of the agent with predefined prompt
-  let systemPrompt = PROMPT_RULES.replace(
-    "{NAME}",
-    skills?.[0]?.tag ?? "@base"
-  );
+  let systemPrompt = PROMPT_RULES.replace("{NAME}", "@base");
 
   //Add user context to the prompt
   systemPrompt += PROMPT_USER_CONTENT(address, ensDomain, converseUsername);

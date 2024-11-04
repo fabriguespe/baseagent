@@ -38,7 +38,8 @@ export const skills: SkillGroup[] = [
           "/drip base_sepolia 0x123456789",
           "/drip base_goerli 0x123456789",
         ],
-        description: "Drip testnet tokens to a specified address.",
+        description:
+          "Drip a default amount of testnet tokens to a specified address.",
         params: {
           network: {
             default: "base",

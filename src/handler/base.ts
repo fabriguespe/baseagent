@@ -104,6 +104,7 @@ export async function handler(context: HandlerContext) {
       await context.send("Invalid network. Please select a valid option.");
       return;
     }
+    context.send("Fetching testnet tokens...");
     const redisClient = await getRedisClient();
 
     const learnWeb3Client = new LearnWeb3Client();
@@ -119,8 +120,14 @@ export async function handler(context: HandlerContext) {
       "Your testnet tokens are being processed. Please wait a moment for the transaction to process."
     );
     const selectedNetwork = supportedNetworks.find(
-      (n) => n.networkName.toLowerCase() === network.toLowerCase()
+      (n) => n.networkId.toLowerCase() === network.toLowerCase()
     );
+    if (!selectedNetwork) {
+      await context.send(
+        "The network currently does not have funds provided by web3 api's\nTry again later..."
+      );
+      return;
+    }
     const result = await learnWeb3Client.dripTokens(
       selectedNetwork!.networkId,
       sender.address
