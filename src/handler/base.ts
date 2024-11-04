@@ -1,6 +1,6 @@
 import { HandlerContext } from "@xmtp/message-kit";
 import { getUserInfo } from "../lib/resolver.js";
-import { clearMemory } from "../lib/openai.js";
+import { clearMemory } from "../lib/gpt.js";
 import {
   Network,
   LearnWeb3Client,

@@ -1,14 +1,12 @@
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
 import type { SkillGroup } from "@xmtp/message-kit";
 import OpenAI from "openai";
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
 
-export type ChatHistoryEntry = { role: string; content: string };
-export type ChatHistories = Record<string, ChatHistoryEntry[]>;
-
+type ChatHistoryEntry = { role: string; content: string };
+type ChatHistories = Record<string, ChatHistoryEntry[]>;
 // New ChatMemory class
 class ChatMemory {
   private histories: ChatHistories = {};
@@ -38,17 +36,16 @@ class ChatMemory {
   }
 }
 
-export const clearMemory = () => {
-  chatHistories = {};
-};
-
 // Create singleton instance
 export const chatMemory = new ChatMemory();
 
-let chatHistories: ChatHistories = {};
+export const clearMemory = () => {
+  chatMemory.clear();
+};
+
 export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} that lives inside a web3 messaging app called Converse.
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
-- You can trigger commands by only sending the command in a newline message.
+- You can trigger skills by only sending the command in a newline message.
 - Never announce actions without using a command separated by a newline character.
 - Dont answer in markdown format, just answer in plaintext.
 - Do not make guesses or assumptions
@@ -57,43 +54,30 @@ export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} t
 - Focus only on helping users with operations detailed below.
 `;
 
-export const PROMPT_SKILLS_AND_EXAMPLES = (skills: SkillGroup[]) => `
-Commands:
-${skills
-  .map((skill) => skill.skills.map((s) => s.command).join("\n"))
-  .join("\n")}
-
-Examples:
-${skills
-  .map((skill) => skill.skills.map((s) => s.examples).join("\n"))
-  .join("\n")}
-  `;
-
-export async function agentResponse(
-  sender: { address: string },
-  userPrompt: string,
-  systemPrompt: string,
-  context: any
-) {
-  try {
-    const { reply } = await textGeneration(
-      sender.address,
-      userPrompt,
-      systemPrompt
-    );
-    await processResponseWithSkill(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.reply("An error occurred while processing your request.");
-  }
+export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
+  let foundSkills = skills.filter(
+    (skill) => skill.tag == `@${tag.toLowerCase()}`
+  );
+  if (!foundSkills.length || !foundSkills[0] || !foundSkills[0].skills)
+    return "";
+  let returnPrompt = `\nCommands:\n${foundSkills[0].skills
+    .map((skill) => skill.command)
+    .join("\n")}\n\nExamples:\n${foundSkills[0].skills
+    .map((skill) => skill.examples)
+    .join("\n")}`;
+  return returnPrompt;
 }
+
 export async function textGeneration(
-  address: string,
+  memoryKey: string,
   userPrompt: string,
   systemPrompt: string
 ) {
-  let messages = chatMemory.getHistory(address);
-  chatMemory.initializeWithSystem(address, systemPrompt);
+  if (!memoryKey) {
+    clearMemory();
+  }
+  let messages = chatMemory.getHistory(memoryKey);
+  chatMemory.initializeWithSystem(memoryKey, systemPrompt);
   if (messages.length === 0) {
     messages.push({
       role: "system",
@@ -115,7 +99,7 @@ export async function textGeneration(
       content: reply || "No response from OpenAI.",
     });
     const cleanedReply = parseMarkdown(reply as string);
-    chatMemory.addEntry(address, {
+    chatMemory.addEntry(memoryKey, {
       role: "assistant",
       content: cleanedReply,
     });
@@ -126,11 +110,14 @@ export async function textGeneration(
   }
 }
 
-export async function processResponseWithSkill(
-  address: string,
+export async function processMultilineResponse(
+  memoryKey: string,
   reply: string,
   context: any
 ) {
+  if (!memoryKey) {
+    clearMemory();
+  }
   let messages = reply
     .split("\n")
     .map((message: string) => parseMarkdown(message))
@@ -142,7 +129,7 @@ export async function processResponseWithSkill(
       const response = await context.skill(message);
       if (response && typeof response.message === "string") {
         let msg = parseMarkdown(response.message);
-        chatMemory.addEntry(address, {
+        chatMemory.addEntry(memoryKey, {
           role: "system",
           content: msg,
         });

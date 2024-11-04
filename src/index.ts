@@ -1,23 +1,24 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { agentResponse } from "./lib/openai.js";
-import { getUserInfo } from "./lib/resolver.js";
+import { textGeneration, processMultilineResponse } from "./lib/gpt.js";
 import { agent_prompt } from "./prompt.js";
+import { getUserInfo } from "./lib/resolver.js";
+
 run(
   async (context: HandlerContext) => {
-    const {
-      message: {
-        content: { content, params },
-        sender,
-      },
-    } = context;
-
-    /*All the commands are handled through the commands file*/
+    /*All the skills are handled through the skills file*/
     /* If its just text, it will be handled by the ensAgent*/
     /* If its a group message, it will be handled by the groupAgent*/
     if (!process?.env?.OPEN_AI_API_KEY) {
       console.warn("No OPEN_AI_API_KEY found in .env");
       return;
     }
+
+    const {
+      message: {
+        content: { content, params },
+        sender,
+      },
+    } = context;
 
     try {
       let userPrompt = params?.prompt ?? content;
@@ -26,17 +27,20 @@ run(
         console.log("User info not found");
         return;
       }
-      let prompt = await agent_prompt(userInfo);
-
-      await agentResponse(sender, userPrompt, prompt, context);
+      const { reply } = await textGeneration(
+        sender.address,
+        userPrompt,
+        await agent_prompt(userInfo)
+      );
+      await processMultilineResponse(sender.address, reply, context);
     } catch (error) {
       console.error("Error during OpenAI call:", error);
-      await context.reply("An error occurred while processing your request.");
+      await context.send("An error occurred while processing your request.");
     }
   },
   {
     client: {
-      logging: "debug",
+      logging: process.env.NODE_ENV === "production" ? "debug" : "off",
     },
   }
 );
