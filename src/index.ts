@@ -36,7 +36,7 @@ run(
   },
   {
     client: {
-      logging: process.env.NODE_ENV === "production" ? "debug" : "off",
+      logging: "debug",
     },
   }
 );
