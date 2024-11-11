@@ -1,5 +1,5 @@
 {
-  "name": "wordle-bot",
+  "name": "baseagent",
   "private": true,
   "type": "module",
   "scripts": {
