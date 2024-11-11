@@ -1,25 +1,23 @@
 import { skills } from "./skills.js";
-import { UserInfo, PROMPT_USER_CONTENT } from "./lib/resolver.js";
-import { PROMPT_RULES, PROMPT_SKILLS_AND_EXAMPLES } from "./lib/gpt.js";
+import { UserInfo, PROMPT_USER_CONTENT } from "@xmtp/message-kit";
+import {
+  PROMPT_REPLACE_VARIABLES,
+  PROMPT_SKILLS_AND_EXAMPLES,
+  PROMPT_RULES,
+} from "@xmtp/message-kit";
 
 export async function agent_prompt(userInfo: UserInfo) {
-  let { address, ensDomain, converseUsername, preferredName } = userInfo;
-
-  //Update the name of the agent with predefined prompt
-  let systemPrompt = PROMPT_RULES.replace("{NAME}", skills?.[0]?.tag ?? "@ens");
-
   //Add user context to the prompt
-  systemPrompt += PROMPT_USER_CONTENT(userInfo);
-
+  let systemPrompt = PROMPT_RULES + PROMPT_USER_CONTENT(userInfo);
   //Add skills and examples to the prompt
-  systemPrompt += PROMPT_SKILLS_AND_EXAMPLES(skills, "@ens");
+  systemPrompt += PROMPT_SKILLS_AND_EXAMPLES(skills, "@base");
 
   systemPrompt += `
   
 ## Example response:
 
 1. When user wants to swap tokens:
-  Hey ${preferredName}! I can help you swap tokens on Base.\nLet me help you swap 10 USDC to ETH\n/swap 10 usdc eth
+  Hey {PREFERRED_NAME! I can help you swap tokens on Base.\nLet me help you swap 10 USDC to ETH\n/swap 10 usdc eth
 
 2. When user wants to swap a specific amount:
   Sure! I'll help you swap 5 DEGEN to DAI\n/swap 5 degen dai
@@ -50,5 +48,11 @@ export async function agent_prompt(userInfo: UserInfo) {
 10. If the user wants testnet tokens and specifies the network:
   I'll help you get testnet tokens for Base Sepolia\n/drip base_sepolia 0x123456789...
   `;
+  systemPrompt = PROMPT_REPLACE_VARIABLES(
+    systemPrompt,
+    userInfo?.address ?? "",
+    userInfo,
+    "@base"
+  );
   return systemPrompt;
 }

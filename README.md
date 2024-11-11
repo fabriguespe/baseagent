@@ -6,7 +6,7 @@ Prompt:
 
 ```jsx
 import { skills } from "./skills.js";
-import { UserInfo, PROMPT_USER_CONTENT } from "./lib/resolver.js";
+import { UserInfo, PROMPT_USER_CONTENT } from "@xmtp/message-kit";
 import { PROMPT_RULES, PROMPT_SKILLS_AND_EXAMPLES } from "./lib/openai.js";
 
 export async function agent_prompt(userInfo: UserInfo) {
