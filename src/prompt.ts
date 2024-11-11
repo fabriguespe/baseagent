@@ -8,10 +8,12 @@ import {
 
 export async function agent_prompt(userInfo: UserInfo) {
   //Add user context to the prompt
-  let systemPrompt = PROMPT_RULES + PROMPT_USER_CONTENT(userInfo);
-  //Add skills and examples to the prompt
-  systemPrompt += PROMPT_SKILLS_AND_EXAMPLES(skills, "@base");
+  let systemPrompt =
+    PROMPT_RULES +
+    PROMPT_USER_CONTENT(userInfo) +
+    PROMPT_SKILLS_AND_EXAMPLES(skills, "@base");
 
+  //Add additional
   systemPrompt += `
   
 ## Example response:
