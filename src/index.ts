@@ -5,23 +5,15 @@ import { getUserInfo } from "@xmtp/message-kit";
 
 run(
   async (context: HandlerContext) => {
-    /*All the skills are handled through the skills file*/
-    /* If its just text, it will be handled by the ensAgent*/
-    /* If its a group message, it will be handled by the groupAgent*/
-    if (!process?.env?.OPEN_AI_API_KEY) {
-      console.warn("No OPEN_AI_API_KEY found in .env");
-      return;
-    }
-
     const {
       message: {
-        content: { content, params },
+        content: { text, params },
         sender,
       },
     } = context;
 
     try {
-      let userPrompt = params?.prompt ?? content;
+      let userPrompt = params?.prompt ?? text;
       const userInfo = await getUserInfo(sender.address);
       if (!userInfo) {
         console.log("User info not found");
