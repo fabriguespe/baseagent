@@ -23,7 +23,6 @@ export async function handler(context: HandlerContext) {
     // Destructure and validate parameters for the send command
     const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
     let senderInfo = await getUserInfo(username);
-    console.log(username, senderInfo);
     if (!amountSend || !tokenSend || !senderInfo) {
       context.reply(
         "Missing required parameters. Please provide amount, token, and username."
@@ -170,13 +169,14 @@ export async function handler(context: HandlerContext) {
     };
   } else if (skill == "pay") {
     const { amount, username } = params;
-    if (!amount || !username) {
+    let senderInfo = await getUserInfo(username);
+    if (!amount || !username || !senderInfo) {
       context.reply(
         "Missing required parameters. Please provide amount and username."
       );
       return;
     }
-    let url = `${payUrl}/?recipientAddress=${username}&amount=${amount}`;
+    let url = `${payUrl}/?recipientAddress=${senderInfo.address}&amount=${amount}`;
     await context.send(url);
   } else if (skill == "show") {
     return {

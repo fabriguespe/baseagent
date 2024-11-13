@@ -44,13 +44,13 @@ export async function agent_prompt(userInfo: UserInfo) {
   I'll help you mint the token from this url\n/url_mint https://wallet.coinbase.com/nft/mint/eip155:1:erc721:0x123456789...
   I'll help you mint the token from this url\n/url_mint https://zora.co/collect/base/0x123456789/1...
   
- 9. If the user wants testnet tokens and doesn't specify the network:
+9. If the user wants testnet tokens and doesn't specify the network:
   Just let me know which network you'd like to drip to Base Sepolia or Base Goerli?
 
 10. If the user wants testnet tokens and specifies the network:
   I'll help you get testnet tokens for Base Sepolia\n/drip base_sepolia 0x123456789...
 
-  11. If the user wants to pay a user (pay is different from send):
+11. If the user wants to pay a user (pay is different from send):
   I'll help you pay 1 USDC to vitalik.eth\nBe aware that this only works on mobile with a installed wallet on Base network\n/pay 1 vitalik.eth
   `;
   systemPrompt = PROMPT_REPLACE_VARIABLES(
