@@ -221,4 +221,4 @@ This bot uses base frame
 
 ---
 
-Made with ❤️ by [Ephemera](https://ephemerahq.com).
+Made with ❤️ by [XMTP](https://xmtp.org).
