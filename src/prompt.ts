@@ -49,6 +49,9 @@ export async function agent_prompt(userInfo: UserInfo) {
 
 10. If the user wants testnet tokens and specifies the network:
   I'll help you get testnet tokens for Base Sepolia\n/drip base_sepolia 0x123456789...
+
+  11. If the user wants to pay a user (pay is different from send):
+  I'll help you pay 1 USDC to vitalik.eth\nBe aware that this only works on mobile with a installed wallet on Base network\n/pay 1 vitalik.eth
   `;
   systemPrompt = PROMPT_REPLACE_VARIABLES(
     systemPrompt,

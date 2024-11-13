@@ -13,13 +13,13 @@ export const ensUrl = "https://app.ens.domains/";
 export async function handler(context: HandlerContext) {
   const {
     message: {
-      content: { command, params },
+      content: { skill, params },
       sender,
     },
   } = context;
   const baseUrl = "https://base-tx-frame.vercel.app/transaction";
-
-  if (command == "send") {
+  const payUrl = "https://pay-frame.vercel.app/";
+  if (skill == "send") {
     // Destructure and validate parameters for the send command
     const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
     let senderInfo = await getUserInfo(username);
@@ -35,8 +35,7 @@ export async function handler(context: HandlerContext) {
       code: 200,
       message: sendUrl,
     };
-  }
-  if (command == "mint") {
+  } else if (skill == "mint") {
     // Destructure and validate parameters for the send command
     const { collection, token_id } = params; // [!code hl] // [!code focus]
     console.log(collection, token_id);
@@ -51,7 +50,7 @@ export async function handler(context: HandlerContext) {
       code: 200,
       message: mintUrl,
     };
-  } else if (command == "url_mint") {
+  } else if (skill == "url_mint") {
     const MINT_URL = "https://xmtp-mintiaml.vercel.app";
     const { url } = context.message.content.params;
 
@@ -98,7 +97,7 @@ export async function handler(context: HandlerContext) {
       );
       return;
     }
-  } else if (command == "drip") {
+  } else if (skill == "drip") {
     const { network } = params;
     if (!network) {
       await context.send("Invalid network. Please select a valid option.");
@@ -153,7 +152,7 @@ export async function handler(context: HandlerContext) {
     );
     // Clear any in-memory cache or state related to the prompt
     clearMemory();
-  } else if (command == "swap") {
+  } else if (skill == "swap") {
     // Destructure and validate parameters for the swap command
     const { amount, token_from, token_to } = params; // [!code hl] // [!code focus]
 
@@ -169,7 +168,17 @@ export async function handler(context: HandlerContext) {
       code: 200,
       message: swapUrl,
     };
-  } else if (command == "show") {
+  } else if (skill == "pay") {
+    const { amount, username } = params;
+    if (!amount || !username) {
+      context.reply(
+        "Missing required parameters. Please provide amount and username."
+      );
+      return;
+    }
+    let url = `${payUrl}/?recipientAddress=${username}&amount=${amount}`;
+    await context.send(url);
+  } else if (skill == "show") {
     return {
       code: 200,
       message: `${baseUrl.replace("/transaction", "")}`,

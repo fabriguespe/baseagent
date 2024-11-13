@@ -8,7 +8,7 @@ export const skills: SkillGroup[] = [
     description: "Swap bot for base.",
     skills: [
       {
-        command: "/swap [amount] [token_from] [token_to]",
+        skill: "/swap [amount] [token_from] [token_to]",
         triggers: ["/swap"],
         examples: ["/swap 10 usdc eth", "/swap 1 dai usdc"],
         handler: handler,
@@ -31,7 +31,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/drip [network] [address]",
+        skill: "/drip [network] [address]",
         triggers: ["/drip"],
         handler: handler,
         examples: [
@@ -54,7 +54,7 @@ export const skills: SkillGroup[] = [
       },
       // Zora mints
       {
-        command: "/url_mint [url]",
+        skill: "/url_mint [url]",
         triggers: ["/url_mint"],
         handler: handler,
         examples: ["/url_mint https://zora.co/collect/base/0x123456789/1..."],
@@ -67,7 +67,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/mint [collection] [token_id]",
+        skill: "/mint [collection] [token_id]",
         examples: ["/mint 0x73a333cb82862d4f66f0154229755b184fb4f5b0 1"],
         triggers: ["/mint"],
         handler: handler,
@@ -84,7 +84,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/send [amount] [token] [username]",
+        skill: "/send [amount] [token] [username]",
         examples: ["/send 1 eth vitalik.eth", "/send 1 usdc 0x123456789..."],
         triggers: ["/send"],
         handler: handler,
@@ -107,7 +107,24 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/show",
+        skill: "/pay [amount] [username]",
+        triggers: ["/pay"],
+        handler: handler,
+        examples: ["/pay 1 vitalik.eth", "/pay 1 0x123456789..."],
+        description: "Pay a user with a specified amount of USDC.",
+        params: {
+          amount: {
+            default: 1,
+            type: "number",
+          },
+          username: {
+            default: "",
+            type: "string",
+          },
+        },
+      },
+      {
+        skill: "/show",
         triggers: ["/show"],
         examples: ["/show"],
         handler: handler,
