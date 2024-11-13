@@ -211,7 +211,7 @@ export const skills: SkillGroup[] = [
 ];
 ```
 
-### Frames Used
+### Frames
 
 This bot uses base frame
 
