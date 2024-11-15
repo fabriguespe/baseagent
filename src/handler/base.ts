@@ -17,16 +17,17 @@ export async function handler(context: HandlerContext) {
   } = context;
 
   if (skill == "pay") {
-    // Destructure and validate parameters for the pay command
-    const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
-    let senderInfo = await getUserInfo(username);
-    if (!amountSend || !tokenSend || !senderInfo) {
+    const { amount: amountSend, token: tokenSend, username } = params;
+
+    let receiverInfo = await getUserInfo(username);
+    console.log(receiverInfo);
+    if (!amountSend || !tokenSend || !receiverInfo) {
       context.reply(
         "Missing required parameters. Please provide amount, token, and username."
       );
       return;
     }
-    let sendUrl = `${TXPAY_URL}/?amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
+    let sendUrl = `${TXPAY_URL}/?amount=${amountSend}&token=${tokenSend}&receiver=${receiverInfo.address}`;
     return {
       code: 200,
       message: sendUrl,
