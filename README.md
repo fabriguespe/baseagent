@@ -31,17 +31,17 @@ export async function agent_prompt(userInfo: UserInfo) {
 2. When user wants to swap a specific amount:
   Sure! I'll help you swap 5 DEGEN to DAI\n/swap 5 degen dai
 
-3. When user wants to send tokens:
-  I'll help you send 1 USDC to 0x123...\n/send 1 usdc 0x123456789...
+3. When user wants to pay tokens:
+  I'll help you pay 1 USDC to 0x123...\n/pay 1 usdc 0x123456789...
 
-4. When user wants to send a specific token:
-  I'll help you send 1 USDC to 0x123...\n/send 1 usdc 0x123456789...
+4. When user wants to pay a specific token:
+  I'll help you pay 1 USDC to 0x123...\n/pay 1 usdc 0x123456789...
 
 5. When user asks about supported tokens:
-   can help you swap or send these tokens on Base:\n- ETH\n- USDC\n- DAI\n- DEGEN\nJust let me know the amount and which tokens you'd like to swap or send!
+   can help you swap or pay these tokens on Base:\n- ETH\n- USDC\n- DAI\n- DEGEN\nJust let me know the amount and which tokens you'd like to swap or pay!
 
 6. When user wants to tip an ens domain default to 1 usdc:
-  Let's go ahead and tip 1 USDC to nick.eth\n/send 1 usdc 0x123456789...
+  Let's go ahead and tip 1 USDC to nick.eth\n/pay 1 usdc 0x123456789...
 
 7. If the users wants to know more or what else can he do:
   I can assist you with swapping, minting, tipping, dripping testnet tokens and sending tokens (all on Base). Just let me know what you need help with!.
@@ -57,8 +57,6 @@ export async function agent_prompt(userInfo: UserInfo) {
 10. If the user wants testnet tokens and specifies the network:
   I'll help you get testnet tokens for Base Sepolia\n/drip base_sepolia 0x123456789...
 
-11. If the user wants to pay a user (pay is different from send):
-  I'll help you pay 1 USDC to vitalik.eth\nBe aware that this only works on mobile with a installed wallet on Base network\n/pay 1 vitalik.eth
   `;
   systemPrompt = PROMPT_REPLACE_VARIABLES(
     systemPrompt,
@@ -74,7 +72,7 @@ export async function agent_prompt(userInfo: UserInfo) {
 
 ```jsx
 import type { SkillGroup } from "@xmtp/message-kit";
-import { handler } from "./handler/base.js";
+import { handler as baseHandler } from "./handler/base.js";
 
 export const skills: SkillGroup[] = [
   {
@@ -86,7 +84,7 @@ export const skills: SkillGroup[] = [
         skill: "/swap [amount] [token_from] [token_to]",
         triggers: ["/swap"],
         examples: ["/swap 10 usdc eth", "/swap 1 dai usdc"],
-        handler: handler,
+        handler: baseHandler,
         description: "Exchange one type of cryptocurrency for another.",
         params: {
           amount: {
@@ -108,7 +106,7 @@ export const skills: SkillGroup[] = [
       {
         skill: "/drip [network] [address]",
         triggers: ["/drip"],
-        handler: handler,
+        handler: baseHandler,
         examples: [
           "/drip base_sepolia 0x123456789",
           "/drip base_goerli 0x123456789",
@@ -127,11 +125,10 @@ export const skills: SkillGroup[] = [
           },
         },
       },
-      // Zora mints
       {
         skill: "/url_mint [url]",
         triggers: ["/url_mint"],
-        handler: handler,
+        handler: baseHandler,
         examples: ["/url_mint https://zora.co/collect/base/0x123456789/1..."],
         description:
           "Return a Frame to mint From a Zora URL or Coinbase Wallet URL",
@@ -145,7 +142,7 @@ export const skills: SkillGroup[] = [
         skill: "/mint [collection] [token_id]",
         examples: ["/mint 0x73a333cb82862d4f66f0154229755b184fb4f5b0 1"],
         triggers: ["/mint"],
-        handler: handler,
+        handler: baseHandler,
         description: "Mint a specific token from a collection.",
         params: {
           collection: {
@@ -159,52 +156,36 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        skill: "/send [amount] [token] [username]",
-        examples: ["/send 1 eth vitalik.eth", "/send 1 usdc 0x123456789..."],
-        triggers: ["/send"],
-        handler: handler,
+        skill: "/pay [amount] [token] [username]",
+        triggers: ["/pay"],
+        examples: ["/pay 10 vitalik.eth"],
         description:
-          "Send a specific amount of a token to a specified address.",
+          "Send a specified amount of a cryptocurrency to a destination address.",
+        handler: baseHandler,
         params: {
           amount: {
-            default: 1,
+            default: 10,
             type: "number",
           },
           token: {
-            default: "eth",
+            default: "usdc",
             type: "string",
             values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
           },
           username: {
             default: "",
-            type: "string",
+            type: "username",
           },
         },
       },
-      {
-        skill: "/pay [amount] [username]",
-        triggers: ["/pay"],
-        handler: handler,
-        examples: ["/pay 1 vitalik.eth", "/pay 1 0x123456789..."],
-        description: "Pay a user with a specified amount of USDC.",
-        params: {
-          amount: {
-            default: 1,
-            type: "number",
-          },
-          username: {
-            default: "",
-            type: "string",
-          },
-        },
-      },
+
       {
         skill: "/show",
         triggers: ["/show"],
         examples: ["/show"],
-        handler: handler,
-        params: {},
+        handler: baseHandler,
         description: "Show the base url",
+        params: {},
       },
     ],
   },
@@ -215,10 +196,10 @@ export const skills: SkillGroup[] = [
 
 This bot uses base frame
 
-- [Base Tx Frame](https://messagekit.ephemerahq.com/directory/basetxframe)
-- [Base Receipt Frame](https://messagekit.ephemerahq.com/directory/txreceipt)
-- [Base Link](https://github.com/fabriguespe/baselink)
+- [Base Frame](https://messagekit.ephemerahq.com/directory/basetxframe)
+  - Still dont work in Converse
+- [Tx Pay](https://messagekit.ephemerahq.com/directory/txpay)
 
 ---
 
-Made with ❤️ by [XMTP](https://xmtp.org).
+Made with ❤️ by [Ephemera](https://ephemerahq.com).

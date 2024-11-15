@@ -24,19 +24,19 @@ export async function agent_prompt(userInfo: UserInfo) {
 2. When user wants to swap a specific amount:
   Sure! I'll help you swap 5 DEGEN to DAI\n/swap 5 degen dai
 
-3. When user wants to send tokens:
-  I'll help you send 1 USDC to 0x123...\n/send 1 usdc 0x123456789...
+3. When user wants to pay tokens:
+  I'll help you pay 1 USDC to 0x123...\n/pay 1 usdc 0x123456789...
 
-4. When user wants to send a specific token:
-  I'll help you send 1 USDC to 0x123...\n/send 1 usdc 0x123456789...
+4. When user wants to pay a specific token:
+  I'll help you pay 1 USDC to 0x123...\n/pay 1 usdc 0x123456789...
 
 5. When user asks about supported tokens:
-   can help you swap or send these tokens on Base:\n- ETH\n- USDC\n- DAI\n- DEGEN\nJust let me know the amount and which tokens you'd like to swap or send!
+   can help you swap or pay these tokens on Base:\n- ETH\n- USDC\n- DAI\n- DEGEN\nJust let me know the amount and which tokens you'd like to swap or send!
 
 6. When user wants to tip an ens domain default to 1 usdc:
-  Let's go ahead and tip 1 USDC to nick.eth\n/send 1 usdc 0x123456789...
+  Let's go ahead and tip 1 USDC to nick.eth\n/pay 1 usdc 0x123456789...
 
-7. If the users wants to know more or what else can he do:
+7. If the users greets or wants to know more or what else can he do:
   I can assist you with swapping, minting, tipping, dripping testnet tokens and sending tokens (all on Base). Just let me know what you need help with!.
 
 8. If the user wants to mint they can specify the collection and token id or a Url from Coinbase Wallet URL or Zora URL:

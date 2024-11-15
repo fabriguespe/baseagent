@@ -1,13 +1,11 @@
 import { HandlerContext } from "@xmtp/message-kit";
 import { getUserInfo } from "@xmtp/message-kit";
 import { clearMemory } from "@xmtp/message-kit";
-import {
-  Network,
-  LearnWeb3Client,
-  BASE_TX_FRAME_URL,
-} from "../lib/learnweb3.js";
+import { Network, LearnWeb3Client } from "../lib/learnweb3.js";
 import { getRedisClient } from "../lib/redis.js";
 
+export const BASE_URL = "https://base-tx-frame.vercel.app/transaction";
+export const TXPAY_URL = "https://txpay.vercel.app";
 export const ensUrl = "https://app.ens.domains/";
 
 export async function handler(context: HandlerContext) {
@@ -17,10 +15,9 @@ export async function handler(context: HandlerContext) {
       sender,
     },
   } = context;
-  const baseUrl = "https://base-tx-frame.vercel.app/transaction";
-  const payUrl = "https://pay-frame.vercel.app/";
-  if (skill == "send") {
-    // Destructure and validate parameters for the send command
+
+  if (skill == "pay") {
+    // Destructure and validate parameters for the pay command
     const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
     let senderInfo = await getUserInfo(username);
     if (!amountSend || !tokenSend || !senderInfo) {
@@ -29,13 +26,13 @@ export async function handler(context: HandlerContext) {
       );
       return;
     }
-    let sendUrl = `${baseUrl}/?transaction_type=send&amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
+    let sendUrl = `${TXPAY_URL}/?amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
     return {
       code: 200,
       message: sendUrl,
     };
   } else if (skill == "mint") {
-    // Destructure and validate parameters for the send command
+    // Destructure and validate parameters for the pay command
     const { collection, token_id } = params; // [!code hl] // [!code focus]
     console.log(collection, token_id);
     if (!collection || !token_id) {
@@ -44,7 +41,7 @@ export async function handler(context: HandlerContext) {
       );
       return;
     }
-    let mintUrl = `${baseUrl}/?transaction_type=mint&collection=${collection}&token_id=${token_id}`;
+    let mintUrl = `${BASE_URL}/?transaction_type=mint&collection=${collection}&token_id=${token_id}`;
     return {
       code: 200,
       message: mintUrl,
@@ -140,7 +137,7 @@ export async function handler(context: HandlerContext) {
 
     await context.send("Here's your transaction receipt:");
     await context.send(
-      `${BASE_TX_FRAME_URL}?txLink=${result.value}&networkLogo=${
+      `${TXPAY_URL}/receipt?txLink=${result.value}&networkLogo=${
         selectedNetwork?.networkLogo
       }&networkName=${selectedNetwork?.networkName.replaceAll(
         " ",
@@ -162,27 +159,13 @@ export async function handler(context: HandlerContext) {
       return;
     }
 
-    let swapUrl = `${baseUrl}/?transaction_type=swap&token_from=${token_from}&token_to=${token_to}&amount=${amount}`;
+    let swapUrl = `${BASE_URL}/?transaction_type=swap&token_from=${token_from}&token_to=${token_to}&amount=${amount}`;
     return {
       code: 200,
       message: swapUrl,
     };
-  } else if (skill == "pay") {
-    const { amount, username } = params;
-    let senderInfo = await getUserInfo(username);
-    if (!amount || !username || !senderInfo) {
-      context.reply(
-        "Missing required parameters. Please provide amount and username."
-      );
-      return;
-    }
-    let url = `${payUrl}/?recipientAddress=${senderInfo.address}&amount=${amount}`;
-    await context.send(url);
   } else if (skill == "show") {
-    return {
-      code: 200,
-      message: `${baseUrl.replace("/transaction", "")}`,
-    };
+    context.send(BASE_URL);
   }
 }
 

@@ -1,6 +1,5 @@
 import axios from "axios";
 
-export const BASE_TX_FRAME_URL = "https://tx-receipt.vercel.app";
 export const SUPPORTED_NETWORKS = [
   "arbitrum_goerli",
   "arbitrum_sepolia",
