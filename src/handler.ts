@@ -1,8 +1,8 @@
 import { HandlerContext } from "@xmtp/message-kit";
 import { getUserInfo } from "@xmtp/message-kit";
 import { clearMemory } from "@xmtp/message-kit";
-import { Network, LearnWeb3Client } from "../lib/learnweb3.js";
-import { getRedisClient } from "../lib/redis.js";
+import { Network, LearnWeb3Client } from "./lib/learnweb3.js";
+import { getRedisClient } from "./lib/redis.js";
 
 export const BASE_URL = "https://base-tx-frame.vercel.app/transaction";
 export const TXPAY_URL = "https://txpay.vercel.app";

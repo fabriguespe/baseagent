@@ -1,20 +1,9 @@
 import { skills } from "./skills.js";
-import { UserInfo, PROMPT_USER_CONTENT } from "@xmtp/message-kit";
-import {
-  PROMPT_REPLACE_VARIABLES,
-  PROMPT_SKILLS_AND_EXAMPLES,
-  PROMPT_RULES,
-} from "@xmtp/message-kit";
+import { defaultPromptTemplate } from "@xmtp/message-kit";
 
-export async function agent_prompt(userInfo: UserInfo) {
-  //Add user context to the prompt
-  let systemPrompt =
-    PROMPT_RULES +
-    PROMPT_USER_CONTENT(userInfo) +
-    PROMPT_SKILLS_AND_EXAMPLES(skills, "@base");
-
+export async function agent_prompt(senderAddress: string) {
   //Add additional
-  systemPrompt += `
+  let fineTuning = `
   
 ## Example response:
 
@@ -56,11 +45,5 @@ export async function agent_prompt(userInfo: UserInfo) {
 11. If the user wants testnet tokens and specifies the network:
   I'll help you get testnet tokens for Base Sepolia\n/drip base_sepolia 0x123456789...
 `;
-  systemPrompt = PROMPT_REPLACE_VARIABLES(
-    systemPrompt,
-    userInfo?.address ?? "",
-    userInfo,
-    "@base"
-  );
-  return systemPrompt;
+  return defaultPromptTemplate(fineTuning, senderAddress, skills, "@base");
 }

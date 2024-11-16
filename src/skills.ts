@@ -1,5 +1,5 @@
 import type { SkillGroup } from "@xmtp/message-kit";
-import { handler as baseHandler } from "./handler/base.js";
+import { handler as baseHandler } from "./handler.js";
 
 export const skills: SkillGroup[] = [
   {
@@ -9,7 +9,6 @@ export const skills: SkillGroup[] = [
     skills: [
       {
         skill: "/swap [amount] [token_from] [token_to]",
-        triggers: ["/swap"],
         examples: ["/swap 10 usdc eth", "/swap 1 dai usdc"],
         handler: baseHandler,
         description: "Exchange one type of cryptocurrency for another.",
@@ -32,7 +31,7 @@ export const skills: SkillGroup[] = [
       },
       {
         skill: "/drip [network] [address]",
-        triggers: ["/drip"],
+
         handler: baseHandler,
         examples: [
           "/drip base_sepolia 0x123456789",
@@ -54,7 +53,7 @@ export const skills: SkillGroup[] = [
       },
       {
         skill: "/url_mint [url]",
-        triggers: ["/url_mint"],
+
         handler: baseHandler,
         examples: ["/url_mint https://zora.co/collect/base/0x123456789/1..."],
         description:
@@ -68,7 +67,7 @@ export const skills: SkillGroup[] = [
       {
         skill: "/mint [collection] [token_id]",
         examples: ["/mint 0x73a333cb82862d4f66f0154229755b184fb4f5b0 1"],
-        triggers: ["/mint"],
+
         handler: baseHandler,
         description: "Mint a specific token from a collection.",
         params: {
@@ -84,7 +83,7 @@ export const skills: SkillGroup[] = [
       },
       {
         skill: "/pay [amount] [token] [username]",
-        triggers: ["/pay"],
+
         examples: ["/pay 10 vitalik.eth"],
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
@@ -108,7 +107,7 @@ export const skills: SkillGroup[] = [
 
       {
         skill: "/show",
-        triggers: ["/show"],
+
         examples: ["/show"],
         handler: baseHandler,
         description: "Show the base url",
