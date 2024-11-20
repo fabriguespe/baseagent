@@ -9,7 +9,7 @@
     "postinstall": "tsc"
   },
   "dependencies": {
-    "@xmtp/message-kit": "1.1.8-beta.9",
+    "@xmtp/message-kit": "1.1.10-beta.2",
     "@redis/client": "^1.6.0",
     "axios": "^1.7.7"
   },
