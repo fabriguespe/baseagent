@@ -32,17 +32,5 @@ export async function handler(context: XMTPContext) {
 
   const { amount: amountSend, token: tokenSend, username } = params;
 
-  let receiverInfo = await getUserInfo(username);
-  console.log(receiverInfo);
-  if (!amountSend || !tokenSend || !receiverInfo) {
-    context.reply(
-      "Missing required parameters. Please provide amount, token, and username."
-    );
-    return;
-  }
-  let sendUrl = `${txpayUrl}/?amount=${amountSend}&token=${tokenSend}&receiver=${receiverInfo.address}`;
-  return {
-    code: 200,
-    message: sendUrl,
-  };
+  await context.sendPayment(amountSend, tokenSend, username);
 }
