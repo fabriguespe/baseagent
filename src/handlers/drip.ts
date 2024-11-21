@@ -78,15 +78,12 @@ export async function handler(context: XMTPContext) {
   }
 
   await context.send("Here's your transaction receipt:");
-  await context.send(
-    `${txpayUrl}/receipt?txLink=${result.value}&networkLogo=${
-      selectedNetwork?.networkLogo
-    }&networkName=${selectedNetwork?.networkName.replaceAll(
-      " ",
-      "-"
-    )}&tokenName=${selectedNetwork?.tokenName}&amount=${
-      selectedNetwork?.dripAmount
-    }`
+  await context.sendReceipt(
+    result.value!,
+    selectedNetwork?.networkLogo,
+    selectedNetwork?.networkName.replaceAll(" ", "-"),
+    selectedNetwork?.tokenName,
+    selectedNetwork?.dripAmount
   );
   // Clear any in-memory cache or state related to the prompt
   clearMemory();
