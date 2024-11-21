@@ -180,14 +180,6 @@ export const skills: SkillGroup[] = [
 ];
 ```
 
-### Frames
-
-This bot uses base frame
-
-- [Base Frame](https://messagekit.ephemerahq.com/directory/basetxframe)
-  - Still dont work in Converse
-- [Tx Pay](https://messagekit.ephemerahq.com/directory/txpay)
-
 ---
 
 Made with ❤️ by [Ephemera](https://ephemerahq.com).

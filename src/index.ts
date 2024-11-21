@@ -9,7 +9,6 @@ import { systemPrompt } from "./prompt.js";
 export const frameUrl = "https://ens.steer.fun/";
 export const baseUrl = "https://base-tx-frame.vercel.app/transaction";
 export const ensUrl = "https://app.ens.domains/";
-export const txpayUrl = "https://txpay.vercel.app";
 
 export const skills: SkillGroup[] = [
   {
