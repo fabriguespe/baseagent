@@ -1,9 +1,9 @@
 import { XMTPContext, clearMemory } from "@xmtp/message-kit";
-import type { skillAction } from "@xmtp/message-kit";
+import type { Skill } from "@xmtp/message-kit";
 import { getRedisClient } from "../lib/redis.js";
 import { LearnWeb3Client, Network } from "../lib/learnweb3.js";
 
-export const registerSkill: skillAction[] = [
+export const registerSkill: Skill[] = [
   {
     skill: "/drip [network] [address]",
     handler: handler,

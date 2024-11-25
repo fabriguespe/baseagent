@@ -1,8 +1,8 @@
 import { XMTPContext } from "@xmtp/message-kit";
-import type { skillAction } from "@xmtp/message-kit";
+import type { Skill } from "@xmtp/message-kit";
 import { baseUrl } from "../index.js";
 
-export const registerSkill: skillAction[] = [
+export const registerSkill: Skill[] = [
   {
     skill: "/swap [amount] [token_from] [token_to]",
     examples: ["/swap 10 usdc eth", "/swap 1 dai usdc"],
