@@ -77,13 +77,7 @@ export async function handler(context: XMTPContext) {
   }
 
   await context.send("Here's your transaction receipt:");
-  await context.sendReceipt(
-    result.value!,
-    selectedNetwork?.networkLogo,
-    selectedNetwork?.networkName.replaceAll(" ", "-"),
-    selectedNetwork?.tokenName,
-    selectedNetwork?.dripAmount
-  );
+  await context.sendReceipt(result.value!);
   // Clear any in-memory cache or state related to the prompt
   clearMemory();
   return;

@@ -31,5 +31,5 @@ export async function handler(context: XMTPContext) {
 
   const { amount: amountSend, token: tokenSend, username } = params;
 
-  await context.sendPayment(amountSend, tokenSend, username);
+  await context.requestPayment(amountSend, tokenSend, username);
 }
